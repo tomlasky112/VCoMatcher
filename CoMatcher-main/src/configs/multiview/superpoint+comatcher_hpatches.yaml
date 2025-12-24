@@ -1,0 +1,11 @@
+model:
+    name: multiview_pipeline
+    extractor:
+      name: third_party.superpoint
+      max_num_keypoints: 1024
+      detection_threshold: 0.0
+      nms_radius: 3
+    multiview_matcher:
+      name: multiview_matchers.comatcher
+      flash: false
+      filter_threshold: 0.1

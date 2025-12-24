@@ -1,0 +1,48 @@
+# VCoMatcher Complete Requirements
+# ==================================
+# Python version: 3.8 - 3.11
+# Last updated: 2025-12-21 (Phase 2 v1.1)
+
+# PyTorch (install separately for GPU support)
+# For GPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+# For CPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Core dependencies
+numpy>=1.20.0
+scipy>=1.7.0           # Required for validation tools
+tqdm>=4.60.0
+Pillow>=9.0.0          # Required for image loading (Phase 2 v1.1)
+opencv-python>=4.5.0   # Required for PnP pose refinement (Phase 1)
+
+# VGGT dependencies
+huggingface_hub>=0.16.0
+timm>=0.9.0
+einops
+safetensors
+
+# Visualization (optional, for validation tools)
+matplotlib>=3.5.0
+
+# For COLMAP integration (optional, advanced users)
+# pycolmap>=0.4.0
+
+# ==================================
+# Installation Notes
+# ==================================
+# 
+# Phase 1 (Data Generation):
+#   - Requires: torch, numpy, opencv-python, Pillow
+#   - VGGT dependencies: huggingface_hub, timm, einops, safetensors
+#
+# Phase 2 (Dataset & Training):
+#   - Requires: All Phase 1 dependencies
+#   - torchvision for image transforms (v1.1 update)
+#
+# Phase 3 (Training):
+#   - Requires: All Phase 2 dependencies
+#   - Additional training dependencies (to be added)
+#
+# Quick install:
+#   pip install -r requirements_vcomatcher.txt

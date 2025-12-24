@@ -1,0 +1,63 @@
+data:
+    name: multiview_megadepth
+    batch_size: 16
+    num_workers: 16
+
+    train_split: test_scenes.txt
+    train_num_per_scene: 100
+    val_split: valid_scenes_clean.txt
+    val_file: valid_quadruples.txt
+    min_hardest_overlap: 0.1
+    max_overlap: 0.8
+    num_overlap_bins: 3
+
+    clip_num: 50000
+    i0_sample_num: 8
+
+    read_depth: true
+    read_image: true
+    preprocessing:
+        resize: 1024
+        side: long
+        square_pad: True
+
+    load_features:
+        do: true  # enable this if you have cached predictions
+        path: exports/megadepth-undist-depth-r1024_SP-k2048-nms3/{scene}.h5
+        padding_length: 2048
+        padding_fn: pad_local_features
+
+
+model:
+    name: multiview_pipeline
+    extractor:
+        name: third_party.superpoint
+        max_num_keypoints: 2048
+        force_num_keypoints: True
+        detection_threshold: 0.0
+        nms_radius: 3
+        trainable: False
+    ground_truth:
+        name: multiview_matchers.multiview_depth_matcher
+        th_positive: 3
+        th_negative: 5
+        th_epi: 5
+    allow_no_extract: True
+    multiview_matcher:
+        name: multiview_matchers.par_comatcher_pri
+        flash: false
+        checkpointed: true
+
+train:
+    seed: 0
+    epochs: 50
+    log_every_iter: 100
+    eval_every_iter: 5000
+    lr: 1e-4
+    lr_schedule:
+        start: 30
+        type: exp
+        on_epoch: true
+        exp_div_10: 10
+    dataset_callback_fn: sample_every_epoch
+    plot: [5, 'src.visualization.visualize_batch.multiview_make_match_figures']
