@@ -29,7 +29,18 @@ from typing import Dict, List, Tuple, Optional
 from tqdm import tqdm
 
 # Add VGGT to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "vggt-main"))
+# CRITICAL FIX v1.2: Path consistency with batch_process_datasets.py
+# Directory structure:
+#   VCoMatcher/
+#   ├── vggt-main/
+#   └── CoMatcher-main/
+#       ├── batch_process_datasets.py
+#       └── vcomatcher_phase1_data_engine.py
+# Both files are in CoMatcher-main/, so they need the same path:
+#   Path(__file__).parent        = CoMatcher-main/
+#   Path(__file__).parent.parent = VCoMatcher/
+#   Path(__file__).parent.parent / "vggt-main" = VCoMatcher/vggt-main/ ✓
+sys.path.insert(0, str(Path(__file__).parent.parent / "vggt-main"))
 
 from vggt.models.vggt import VGGT
 from vggt.utils.load_fn import load_and_preprocess_images_square
@@ -950,11 +961,16 @@ class VGGTDataEngine:
         print(f"Processing scene: {scene_dir}")
         print(f"{'='*80}")
         
-        # Load images
+        # CRITICAL FIX v1.2: Support both 'images' and 'imgs' folder names
+        # ScanNet uses 'images', MegaDepth often uses 'imgs'
         image_dir = scene_dir / "images"
         if not image_dir.exists():
-            print(f"Error: {image_dir} does not exist")
-            return False
+            image_dir = scene_dir / "imgs"
+            if not image_dir.exists():
+                print(f"Error: Neither 'images' nor 'imgs' directory exists in {scene_dir}")
+                return False
+            else:
+                print(f"  ℹ️  Using 'imgs' directory (MegaDepth format)")
         
         image_paths = sorted(glob.glob(str(image_dir / "*")))
         if len(image_paths) == 0:

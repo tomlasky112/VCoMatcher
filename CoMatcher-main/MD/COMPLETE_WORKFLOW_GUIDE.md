@@ -1,51 +1,52 @@
 # 🚀 VCoMatcher 完整工作流程指南
 
-**版本**: v2.4 (All-Tests-Ready) | **日期**: 2025-12-23  
-**状态**: Phase 1 v1.6 (生产级) | Phase 2 v1.1 (就绪) | 测试 v1.7 (完善) | Phase 3 准备中
-
-## ⚠️ **重要通知: v1.6 必须升级**
-
-如果你使用 v1.5 或更早版本，**必须升级到 v1.6**！
-
-**关键修复**:
-- 🔴 修复坐标系混淆bug（重投影精度提升80%）
-- 🔴 修复14个其他关键bug
-- ✅ 达到生产级代码质量
-
-**升级步骤**:
-```bash
-# 1. 删除旧数据
-rm -rf data/vcomatcher_phase1/*
-
-# 2. 使用v1.6重新生成
-python vcomatcher_phase1_data_engine.py --scene_dir ... --output_dir data/vcomatcher_phase1
-```
+**版本**: v2.5 | **日期**: 2025-12-25  
+**状态**: Phase 1 v1.8 (生产级) | Phase 2 v1.1 (就绪) | 测试 v1.8 (完善) | Phase 3 准备中
 
 ---
 
 ## 🏗️ 1. 环境准备
 
-确保已安装所有依赖项。
-
 ```bash
-cd OriCoMatcher/CoMatcher-main
+cd CoMatcher-main
 pip install -r requirements_vcomatcher.txt
 ```
 
 ---
 
-## 🛠️ 2. Phase 1: 数据生成 (Data Engine)
+## 🛠️ 2. Phase 1: 数据生成
 
-使用 VGGT 生成高质量的伪真值 (Pseudo-GT)。v1.4 版本引入了滑动窗口机制，支持包含 100+ 图像的大规模场景。
-
-### 运行命令 (v1.6)
+### 2.1 单场景处理
 ```bash
 python vcomatcher_phase1_data_engine.py \
     --scene_dir ../../vggt-main/examples/kitchen \
-    --output_dir ./data/vcomatcher_phase1_test \
+    --output_dir ./data/vcomatcher_phase1 \
     --tau_uncertainty 15.0 \
-    --pnp_tau 6.0 \         # v1.6新增: PnP精英点阈值
-    --use_sliding_window    # 默认开启
+    --pnp_tau 6.0
+```
+
+### 2.2 批量处理 (推荐)
+```bash
+# Step 1: 验证数据集
+python verify_dataset_structure.py --dataset_root /data/scannet --dataset_name scannet
+
+# Step 2: 批处理
+python batch_process_datasets.py \
+    --scannet_root /data/scannet \
+    --megadepth_root /data/megadepth \
+    --output_root ./data/vcomatcher_phase1 \
+    --resume
+
+# Step 3: 监控进度
+python monitor_batch_progress.py
+```
+
+> 详见 `BATCH_PROCESSING.md`
+
+### 验证生成结果
+```bash
+python validate_phase1_comprehensive.py --data_file ./data/vcomatcher_phase1/xxx.npz
+python run_all_tests.py --critical-only
 ```
 
 **v1.6 新增参数**:

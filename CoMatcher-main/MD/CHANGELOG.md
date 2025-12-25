@@ -1,6 +1,28 @@
 # VCoMatcher 更新日志
 
-**当前版本**: v1.7 | **更新日期**: 2025-12-23
+**当前版本**: v1.8 | **更新日期**: 2025-12-25
+
+---
+
+## v1.8 (2025-12-25) - 批处理系统 + 文档整合
+
+### 新增
+- `batch_process_datasets.py` - 生产级批处理引擎 (v1.2.1)
+- `verify_dataset_structure.py` - 数据集验证器
+- `monitor_batch_progress.py` - 进度监控器
+- `quick_batch_start.sh` - 快速启动模板
+- `check_import_paths.py` - 路径验证工具
+
+### 批处理特性
+- ✅ ScanNet + MegaDepth 完全支持
+- ✅ 自动检测 `images`/`imgs` 目录
+- ✅ 断点续传 + 错误隔离
+- ✅ 智能显存管理 (OOM 风险 -90%)
+- ✅ 参数验证 + 权限检查
+
+### 文档整合
+- 文件数: 20 → 10 (精简 50%)
+- 删除 10 个冗余文档 (合并到现有文档)
 
 ---
 
